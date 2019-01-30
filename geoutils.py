@@ -1,9 +1,5 @@
-#!/usr/bin/python
-import webbrowser
-import sys
-import getopt
 import csv
-from itertools import combinations
+import xmltodict
 from math import hypot
 
 
@@ -92,51 +88,20 @@ def get_dup_list(dist_tuple_list):
     return dup_list
 
 
-def main(argv):
+def fill_xml_points(points, open_xml):
     """
-    Return a list of same-distance points couples from a file of 2D points.
+    Update an xml file with points passed as argument.
 
-    Given a csv file (inputfile) will:
-    - Create a list of tuple (IDp, Xp, Yp)
-    - Create a list of all possible combinations of these points
-    - Create a list of these combinations points distances.
-    - Search for any matching distances between these combinations.
+    The xml file is parsed as a dictionary and then the X, Y coordinates values
+    of every 'Riflettore' are updated with the points' coordinates.
     """
-    inputfile = ''
-    outputfile = ''
-    try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
-    except getopt.GetoptError:
-        print('geomatch.py -i <inputfile> -o <outputfile>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('geomatch.py -i <inputfile> -o <outputfile>')
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfile = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
-
-    points = rows2list(open(inputfile))
-
-    comb_list = list(combinations(points, 2))
-
-    dist_tuple_list = comb2dist_tuple_list(comb_list)
-
-    dup_list = get_dup_list(dist_tuple_list)
-
-    with open(outputfile, "w+") as f:
-        for dup in dup_list:
-            f.write("Match!\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n"\
-                    .format(dup[0][0][0], dup[0][0][1], dup[0][0][2], dup[0][1][0],
-                            dup[0][1][1], dup[0][1][2], dup[0][2], dup[1][0][0],
-                            dup[1][0][1], dup[1][0][2], dup[1][1][0], dup[1][1][1],
-                            dup[1][1][2], dup[1][2],)
-            )
-
-    webbrowser.open(outputfile)
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+    dict = {}
+    with open_xml as fd:
+        dict = xmltodict.parse(fd.read())
+        count = 0
+        for rif in dict['Impianto']['Riflettori']['Riflettore']:
+            if rif['@Numero'] == points[count][0]:
+                rif['Y']= points[count][2]
+                rif['X'] = points[count][1]
+            count += 1
+    return dict
