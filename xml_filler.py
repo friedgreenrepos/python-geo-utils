@@ -1,5 +1,4 @@
 import csv
-import untangle
 import xmltodict
 import webbrowser
 import sys
