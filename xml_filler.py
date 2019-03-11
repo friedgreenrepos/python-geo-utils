@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-import csv
 import xmltodict
 import webbrowser
 import sys
 import getopt
 from geoutils import fill_xml_points, rows2list
+
 
 def main(argv):
     """

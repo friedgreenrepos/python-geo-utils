@@ -2,9 +2,12 @@
 import webbrowser
 import sys
 import getopt
-import csv
 from itertools import combinations
-from geoutils import(rows2list, comb2dist_tuple_list, get_dup_list)
+from geoutils import (
+    rows2list,
+    comb2dist_tuple_list,
+    get_dup_list
+)
 
 
 def main(argv):
@@ -43,12 +46,12 @@ def main(argv):
 
     with open(outputfile, "w+") as f:
         for dup in dup_list:
-            f.write("Match!\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n"\
+            f.write("Match!\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n#{} ({}, {}) and #{} ({}, {}), dist={:06.3f}\n"
                     .format(dup[0][0][0], dup[0][0][1], dup[0][0][2], dup[0][1][0],
                             dup[0][1][1], dup[0][1][2], dup[0][2], dup[1][0][0],
                             dup[1][0][1], dup[1][0][2], dup[1][1][0], dup[1][1][1],
                             dup[1][1][2], dup[1][2],)
-            )
+                    )
 
     webbrowser.open(outputfile)
 

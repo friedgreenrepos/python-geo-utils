@@ -45,11 +45,10 @@ def comb2dist_dict_list(comb_list):
     dist_dict_list = []
     for comb in comb_list:
         dist_dict_list.append({
-                'point_a': comb[0],
-                'point_b': comb[1],
-                'dist_ab': point2D_dist(comb[0], comb[1]),
-                }
-        )
+            'point_a': comb[0],
+            'point_b': comb[1],
+            'dist_ab': point2D_dist(comb[0], comb[1]),
+        })
     return dist_dict_list
 
 
@@ -75,11 +74,11 @@ def get_dup_list(dist_tuple_list):
     dup_list = []
     sorted_by_dist = sorted(dist_tuple_list, key=lambda tup: tup[2])
     i = 0
-    while i < (len(sorted_by_dist)-1):
+    while i < (len(sorted_by_dist) - 1):
         sub_list = []
-        while (sorted_by_dist[i+1][2] - sorted_by_dist[i][2] < 0.5):
+        while (sorted_by_dist[i + 1][2] - sorted_by_dist[i][2] < 0.5):
             sub_list.append(sorted_by_dist[i])
-            sub_list.append(sorted_by_dist[i+1])
+            sub_list.append(sorted_by_dist[i + 1])
             i += 1
         if sub_list:
             sub_list = list(set(sub_list))
@@ -101,7 +100,7 @@ def fill_xml_points(points, open_xml):
         count = 0
         for rif in dict['Impianto']['Riflettori']['Riflettore']:
             if rif['@Numero'] == points[count][0]:
-                rif['Y']= points[count][2]
+                rif['Y'] = points[count][2]
                 rif['X'] = points[count][1]
             count += 1
     return dict
