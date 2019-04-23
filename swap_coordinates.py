@@ -1,14 +1,6 @@
 #!/usr/bin/env python
 import csv
-# import webbrowser
-# import sys
-# import getopt
-# from itertools import combinations
-# from geoutils import (
-#     rows2list,
-#     comb2dist_tuple_list,
-#     get_dup_list
-# )
+
 
 lines = [line.rstrip('\n') for line in open('data_samples/Layoutnew2.lmk')]
 header = []
@@ -41,67 +33,66 @@ for ln in lines:
 
     final_array.append(csv_array)
 
-with open('tmp_csv.csv', 'w+') as f:
+with open('data_samples/tmp_csv.csv', 'w+') as f:
     writer = csv.writer(f, delimiter=",")
     writer.writerows(final_array)
 
 
+def matching_row(el, index, open_csv):
+    reader = csv.DictReader(open_csv)
+    for row in reader:
+        if el == row[index]:
+            return row
+    return None
+
+# per ogni riga del file PF1819.txt
+# - paddo di 0 il primo elemento
+# - lo cerco nel file tmp_csv
+# - se lo trovo sostituisco x[mm], y[mm] con 2° e 3° elemento
+#   del file .txt
+# - altrimenti scrivo una nuova riga in tmp_csv con
+#   numero paddato, x, y
+
+
 with open('data_samples/PF1819_d.txt') as swap_csv:
-    # import pdb; pdb.set_trace()
     swap_reader = csv.reader(swap_csv, delimiter=',')
-    with open('tmp_csv.csv') as tmp_csv:
-        tmp_reader = csv.DictReader(tmp_csv)
-        with open('final_swap.csv', 'w+') as f:
-            writer = csv.writer(f, delimiter=",")
-            final_rows = []
-            found = False
-            for swap_row in swap_reader:
-                r_0 = str(swap_row[0]).zfill(6)
-                if not found and r_0 != "000001":
-                    new_row = [
-                        r_0,
-                        swap_row[1],
-                        swap_row[2],
-                        '0',
-                        '0',
-                        '0',
-                        '0',
-                        '0',
-                        '0',
-                    ]
-                    final_rows.append(new_row)
-                found = False
-                for tmp_row in tmp_reader:
-                    if r_0 == tmp_row['globID']:
-                        found = True
-                        new_row = [
-                            tmp_row['globID'],
-                            swap_row[1],
-                            swap_row[2],
-                            tmp_row['type'],
-                            tmp_row['subtype'],
-                            tmp_row['size[mm]'],
-                            tmp_row['layer1'],
-                            tmp_row['layer2'],
-                            tmp_row['layer3'],
-                        ]
-                        final_rows.append(new_row)
-                        break
-                    else:
-                        continue
-            writer.writerows(final_rows)
+    final_rows = []
+    for swap_row in swap_reader:
+        r_0 = str(swap_row[0]).zfill(6)
+        tmp_row = matching_row(r_0, 'globID', open('data_samples/tmp_csv.csv'))
+        if tmp_row is not None:
+            swapped_row = [
+                tmp_row['globID'],
+                swap_row[1],
+                swap_row[2],
+                tmp_row['type'],
+                tmp_row['subtype'],
+                tmp_row['size[mm]'],
+                tmp_row['layer1'],
+                tmp_row['layer2'],
+                tmp_row['layer3'],
+            ]
+            final_rows.append(swapped_row)
+        else:
+            default_row = [
+                r_0,
+                swap_row[1],
+                swap_row[2],
+                '0',
+                '0',
+                '0',
+                '0',
+                '0',
+                '0',
+            ]
+            final_rows.append(default_row)
 
+with open('data_samples/final_swap.csv', 'w+') as f:
+    writer = csv.writer(f, delimiter=",")
+    writer.writerows(final_rows)
 
-        # per ogni riga del file PF1819.txt
-        # - paddo di 0 il primo elemento
-        # - lo cerco nel file tmp_csv
-        # - se lo trovo sostituisco x[mm], y[mm] con 2° e 3° elemento
-        #   del file .txt
-        # - altrimenti scrivo una nuova riga in tmp_csv con
-        #   numero paddato, x, y
-
-
-
+with open('data_samples/final_swap.lmk', w+) as f:
+    
 
 
 # def main(argv):
