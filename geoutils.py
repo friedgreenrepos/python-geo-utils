@@ -104,3 +104,46 @@ def fill_xml_points(points, open_xml):
                 rif['X'] = points[count][1]
             count += 1
     return dict
+
+
+def lmk2csv(open_lmk, outputfile):
+    """
+    Create a csv file from a lmk one.
+    Return header lines as an array and write csv file into 'outputfile'.
+    """
+    lines = [line.rstrip('\n') for line in open_lmk]
+    header = []
+    # pop header lines out of file
+    for i in range(0, 14):
+        ln = lines.pop(0)
+        header.append(ln)
+    # strip spaces to get an array of elements
+    final_array = []
+    for ln in lines:
+        csv_array = []
+        csv_array.append(ln[0:6])
+        csv_array.append(ln[7:16].replace(" ", ""))
+        csv_array.append(ln[17:26].replace(" ", ""))
+        csv_array.append(ln[27:31].replace(" ", ""))
+        csv_array.append(ln[32:39].replace(" ", ""))
+        csv_array.append(ln[40:48].replace(" ", ""))
+
+        if ln[49:55].replace(" ", ""):
+            csv_array.append(ln[49:55].replace(" ", ""))
+        else:
+            csv_array.append(0)
+        if ln[56:62].replace(" ", ""):
+            csv_array.append(ln[56:62].replace(" ", ""))
+        else:
+            csv_array.append(0)
+        if ln[63:69].replace(" ", ""):
+            csv_array.append(ln[63:69].replace(" ", ""))
+        else:
+            csv_array.append(0)
+
+        final_array.append(csv_array)
+    # write array to csv
+    with open(outputfile, 'w+') as f:
+        writer = csv.writer(f, delimiter=",")
+        writer.writerows(final_array)
+    return header
