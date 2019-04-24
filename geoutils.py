@@ -106,19 +106,20 @@ def fill_xml_points(points, open_xml):
     return dict
 
 
-def lmk2csv(open_lmk, outputfile):
+def lmk2csv(open_lmk):
     """
     Create a csv file from a lmk one.
-    Return header lines as an array and write csv file into 'outputfile'.
+    Return header lines as an array, column titles as a string
+    and remaining rows as array of arrays.
     """
     lines = [line.rstrip('\n') for line in open_lmk]
     header = []
     # pop header lines out of file
-    for i in range(0, 14):
+    for i in range(0, 15):
         ln = lines.pop(0)
         header.append(ln)
     # strip spaces to get an array of elements
-    final_array = []
+    rows_data = []
     for ln in lines:
         csv_array = []
         csv_array.append(ln[0:6])
@@ -141,9 +142,62 @@ def lmk2csv(open_lmk, outputfile):
         else:
             csv_array.append(0)
 
-        final_array.append(csv_array)
-    # write array to csv
-    with open(outputfile, 'w+') as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerows(final_array)
-    return header
+        rows_data.append(csv_array)
+    return header, rows_data
+
+
+def match_el_array(el, rows, index=0):
+    """
+    Search for matches of 'el' in 'rows' of given 'index'.
+    Return row of first found match or empty array.
+    """
+    for row in rows:
+        if el == row[index]:
+            return row
+    return []
+
+
+def swap_csv_coordinates(swapfile, rows):
+    """
+    Read coordinates in 'swap_csv' and replace them in 'main_csv'.
+    For row in 'swap_csv':
+    - pad first element with zeroes (6 digits are needed)
+    - look for matches of such element in main_csv
+    - if occurrence is found replace main_csv x[mm] and y[mm] column values
+      with 2nd and 3rd elements of swap_csv.
+    - if not, create a default row filled with swap_csv values and defaults.
+    Return array of final swapped rows as arrays.
+    """
+    with open(swapfile) as swap_csv:
+        swap_reader = csv.reader(swap_csv, delimiter=',')
+        swapped_rows = []
+        for swap_row in swap_reader:
+            r_0 = str(swap_row[0]).zfill(6)
+            tmp_row = match_el_array(r_0, rows)
+            if tmp_row:
+                swapped_row = [
+                    tmp_row[0],
+                    swap_row[1],
+                    swap_row[2],
+                    tmp_row[3],
+                    tmp_row[4],
+                    tmp_row[5],
+                    tmp_row[6],
+                    tmp_row[7],
+                    tmp_row[8],
+                ]
+                swapped_rows.append(swapped_row)
+            else:
+                default_row = [
+                    r_0,
+                    swap_row[1],
+                    swap_row[2],
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                    '0',
+                ]
+                swapped_rows.append(default_row)
+    return swapped_rows
