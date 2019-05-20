@@ -201,3 +201,13 @@ def swap_csv_coordinates(swapfile, rows):
                 ]
                 swapped_rows.append(default_row)
     return swapped_rows
+
+
+def convert_to_point(number):
+    '''Convert input number to int from exponential notation '''
+    if 'D' in str(number):
+        num_and_exp = number.split("D")
+        mantissa = float(num_and_exp[0])
+        exp = int(num_and_exp[1])
+        number = mantissa * 10 ** exp
+    return number
