@@ -26,7 +26,7 @@ python match_distance.py -i  <inputfile> -o <outputfile>
 
 Example:
 ```
-python -i data_samples/point_coordinates.txt -o my_matches.txt
+python match_distance.py -i data_samples/point_coordinates.txt -o my_matches.txt
 ```
 
 ### Script #2: XML Filler
@@ -41,7 +41,7 @@ python xml_filler.py -x <input_xml> -p <input_points> -o <outputfile>
 
 Example:
 ```
-python -x data_samples/riflettori_utf8.xml -p data_samples/point_coordinates.txt -o my_filled-xml.xml
+python xml_filler.py -x data_samples/riflettori_utf8.xml -p data_samples/point_coordinates.txt -o my_filled-xml.xml
 ```
 
 ### Script #3: Swap Coordinates
