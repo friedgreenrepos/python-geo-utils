@@ -25,7 +25,9 @@ python match_distance.py -i  <inputfile> -o <outputfile>
 ```
 
 Example:
-`python -i data_samples/point_coordinates.txt -o my_matches.txt`
+```
+python -i data_samples/point_coordinates.txt -o my_matches.txt
+```
 
 ### Script #2: XML Filler
 
