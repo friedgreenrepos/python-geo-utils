@@ -15,11 +15,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
-        print('swap_coordinates.py -i <inputfile> -o <outputfile>')
+        print('out_to_dxf.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('swap_coordinates.py -i <inputfile> -o <outputfile>')
+            print('out_to_dxf.py -i <inputfile> -o <outputfile>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             outfile = arg
