@@ -114,10 +114,18 @@ def lmk2csv(open_lmk):
     """
     lines = [line.rstrip('\n') for line in open_lmk]
     header = []
-    # pop header lines out of file
-    for i in range(0, 15):
-        ln = lines.pop(0)
-        header.append(ln)
+    # pop header lines out of file (lines that start with # + 1)
+    line_count = 0
+    for line in lines:
+        if line[0] == '#':
+            header.append(line)
+            line_count += 1
+        else:
+            header.append(line)
+            line_count += 1
+            break
+    for i in range(0, line_count):
+        lines.pop(0)
     # strip spaces to get an array of elements
     rows_data = []
     for ln in lines:
