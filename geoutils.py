@@ -1,5 +1,6 @@
 import csv
 import xmltodict
+import copy
 from math import hypot
 
 
@@ -222,3 +223,12 @@ def convert_to_point(n):
         else:
             n = float(0)
     return n
+
+
+def trans_coordinates(delta_x, delta_y, rows_data):
+    '''Translate 2D coordinates using delta_x and delta_y'''
+    trans_rows = copy.deepcopy(rows_data)
+    for t_row in trans_rows:
+        t_row[1] = int(t_row[1]) + int(delta_x)
+        t_row[2] = int(t_row[2]) + int(delta_y)
+    return trans_rows
