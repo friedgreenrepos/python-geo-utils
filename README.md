@@ -73,3 +73,18 @@ Example:
 ```
 python out_to_dxf.py -i data_samples/02651.OUT -o testdxf.dxf
 ```
+
+### Script #5: Translate lmk
+
+> Translate by given deltas (input via command line) the 2D coordinates in the lmk file.
+
+Usage:
+
+```
+python trans_lmk.py -i <lmkfile> -o <outputfile>
+```
+
+Example:
+```
+python trans_lmk.py -i data_samples/Layout190701.lmk -o data_samples/Layout_translated.lmk
+```
