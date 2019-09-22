@@ -1,4 +1,7 @@
 import sys
+import xmltodict
+import csv
+import geoutils
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -7,14 +10,11 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QLineEdit,
     QGridLayout,
-    QFileDialog)
+    QFileDialog,
+    QErrorMessage,
+    QLabel)
 from PyQt5.QtCore import QDir
 from itertools import combinations
-from geoutils import (
-    rows2list,
-    comb2dist_tuple_list,
-    get_dup_list
-)
 
 
 class GeoUtilsMainWindow(QMainWindow):
@@ -69,6 +69,7 @@ class GeoUtilsMainWindow(QMainWindow):
 
         # quit button
         qbtn = QPushButton('Quit', self)
+        qbtn.setStyleSheet("background-color: #d00303; color: #fff")
         qbtn.clicked.connect(QApplication.instance().quit)
         qbtn.resize(qbtn.sizeHint())
         qbtn.move(20, 200)
@@ -88,53 +89,64 @@ class GeoUtilsMainWindow(QMainWindow):
         self.move(qr.topLeft())
 
 
-class MatchDistanceWindow(QWidget):
+class BaseIOWindow(QWidget):
 
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        grid = QGridLayout()
-        self.setLayout(grid)
+        ''' Basic setup for I/O windows. IMPORTANT: call show() method in subclass'''
+        # grid = QGridLayout()
+        # self.setLayout(grid)
+        self.grid = QGridLayout()
+        self.setLayout(self.grid)
 
-        self.input_file = QLineEdit()
+        self.error_dialog = QErrorMessage()
+
+        self.input_file_1 = QLineEdit()
+        self.input_file_2 = QLineEdit()
         self.output_file = QLineEdit()
 
-        btn_input = QPushButton("Select input file")
-        btn_output = QPushButton("Select output file")
-        btn_run = QPushButton("Run")
+        self.btn_input_1 = QPushButton("Select input file")
+        self.btn_input_2 = QPushButton("Select input file")
+        self.btn_output = QPushButton("Select output file")
+        self.btn_run = QPushButton("Run")
+        self.btn_run.setStyleSheet("background-color: #01942e")
 
-        grid.addWidget(self.input_file, 1, 1)
-        # grid.addWidget(self.file_2, 2, 1)
-        grid.addWidget(self.output_file, 2, 1)
-        grid.addWidget(btn_input, 1, 2)
-        # grid.addWidget(btn2, 2, 2)
-        grid.addWidget(btn_output, 2, 2)
-        grid.addWidget(btn_run, 3, 2)
+        # grid.addWidget(self.input_file_1, 1, 1)
+        # grid.addWidget(self.output_file, 2, 1)
+        # grid.addWidget(self.btn_input, 1, 2)
+        # grid.addWidget(self.btn_output, 2, 2)
+        # self.grid.addWidget(self.btn_run, 3, 2)
 
-        btn_input.clicked.connect(self.select_input_file)
-        btn_output.clicked.connect(self.select_output_file)
+        self.btn_input_1.clicked.connect(self.select_input_file_1)
+        self.btn_input_2.clicked.connect(self.select_input_file_2)
+        self.btn_output.clicked.connect(self.select_output_file)
+        self.btn_run.clicked.connect(self.on_run)
 
-        btn_run.clicked.connect(self.on_run)
+        # windows size and positioning
+        self.resize(400, 300)
+        self.center()
+        # self.show()
 
-        self.setWindowTitle("script#1: Match distance")
-        self.show()
+    def center(self):
+        '''Centers window according to screen dimensions'''
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
-    def select_input_file(self):
+    def select_input_file_1(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
         # filename, _ = QFileDialog.getOpenFileName(self, "Open file", '/home')
         if filename != "":
-            self.input_file.setText(filename)
+            self.input_file_1.setText(filename)
 
-    # def select_input_file(self):
-    #     fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-    #     if fname[0]:
-    #         f = open(fname[0], 'r')
-    #
-    #         with f:
-    #             data = f.read()
-    #             self.file1.setText(data)
+    def select_input_file_2(self):
+        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
+        if filename != "":
+            self.input_file_2.setText(filename)
 
     def select_output_file(self):
         filename, _ = QFileDialog.getSaveFileName(self, "Select Files", QDir.currentPath(), "*.html")
@@ -142,16 +154,51 @@ class MatchDistanceWindow(QWidget):
             self.output_file.setText(filename)
 
     def on_run(self):
-        input_file = self.input_file.text()
+        ''' Define method in subclass'''
+        return
+
+
+class MatchDistance(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        self.btn_input_1.setToolTip(
+            '<i>Select 2D coordinates file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select matching distances output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.btn_run, 3, 2)
+
+        self.setWindowTitle("script#1: Match distance")
+        self.show()
+
+    def on_run(self):
+        input_file = self.input_file_1.text()
         output_file = self.output_file.text()
 
-        points = rows2list(open(input_file))
+        if not input_file:
+            self.error_dialog.showMessage('Please select an input file.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        points = geoutils.rows2list(open(input_file))
 
         comb_list = list(combinations(points, 2))
 
-        dist_tuple_list = comb2dist_tuple_list(comb_list)
+        dist_tuple_list = geoutils.comb2dist_tuple_list(comb_list)
 
-        dup_list = get_dup_list(dist_tuple_list)
+        dup_list = geoutils.get_dup_list(dist_tuple_list)
 
         with open(output_file, "w+") as f:
             for dup in dup_list:
@@ -163,9 +210,261 @@ class MatchDistanceWindow(QWidget):
                         )
 
 
+class XMLFiller(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        self.btn_input_1.setToolTip(
+            '<i>Select XML file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_input_2.setToolTip(
+            '<i>Select input points file.<i>'
+        )
+        self.btn_input_2.resize(self.btn_input_2.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select updated XML output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.input_file_2, 2, 1)
+        self.grid.addWidget(self.output_file, 3, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_input_2, 2, 2)
+        self.grid.addWidget(self.btn_output, 3, 2)
+        self.grid.addWidget(self.btn_run, 4, 2)
+
+        self.setWindowTitle("script#2: XML filler")
+        self.show()
+
+    def on_run(self):
+        input_xml = self.input_file_1.text()
+        input_points = self.input_file_2.text()
+        output_file = self.output_file.text()
+
+        if not input_xml or not input_points:
+            self.error_dialog.showMessage('Please select input files.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        points = geoutils.rows2list(open(input_points))
+
+        fill_xml_dict = geoutils.fill_xml_points(points=points, open_xml=open(input_xml))
+
+        fill_xml_xml = xmltodict.unparse(fill_xml_dict, pretty=True)
+
+        with open(output_file, "w+") as f:
+            f.write(fill_xml_xml)
+
+
+class SwapCoordinates(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        self.btn_input_1.setToolTip(
+            '<i>Select lmk file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_input_2.setToolTip(
+            '<i>Select 2D points csv file.<i>'
+        )
+        self.btn_input_2.resize(self.btn_input_2.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select updated lmk output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.input_file_2, 2, 1)
+        self.grid.addWidget(self.output_file, 3, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_input_2, 2, 2)
+        self.grid.addWidget(self.btn_output, 3, 2)
+        self.grid.addWidget(self.btn_run, 4, 2)
+
+        self.setWindowTitle("script#3: Swap coordinates")
+        self.show()
+
+    def on_run(self):
+        input_lmk = self.input_file_1.text()
+        input_points = self.input_file_2.text()
+        output_file = self.output_file.text()
+
+        if not input_lmk or not input_points:
+            self.error_dialog.showMessage('Please select input files.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        header, rows_data = geoutils.lmk2csv(open(input_lmk))
+
+        swapped_rows = geoutils.swap_csv_coordinates(input_points, rows_data)
+
+        with open(output_file, 'w+') as f:
+            f.write('\n'.join(header))
+            f.write('\n')
+            for fr in swapped_rows:
+                f.write(fr[0])
+                f.write(str(fr[1]).rjust(10))
+                f.write(str(fr[2]).rjust(10))
+                f.write(str(fr[3]).rjust(5))
+                f.write(str(fr[4]).rjust(8))
+                f.write(str(fr[5]).rjust(9))
+                f.write(str(fr[6]).rjust(7))
+                f.write(str(fr[7]).rjust(7))
+                f.write(str(fr[8]).rjust(7))
+                f.write('\n')
+
+
+class OutToDxf(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        self.btn_input_1.setToolTip(
+            '<i>Select input <b>.out</b> file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select <b>.dxf</b> output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.btn_run, 3, 2)
+
+        self.setWindowTitle("script#4: Out To Dxf")
+        self.show()
+
+    def on_run(self):
+        outfile = self.input_file_1.text()
+        output_file = self.output_file.text()
+
+        if not outfile:
+            self.error_dialog.showMessage('Please select an input file.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        height = 0.07
+        layer_1 = 1  # layer points
+        layer_2 = 2  # layer text
+
+        # setting up header
+        header = "  0\nSECTION\n2\nHEADER\n  9\n$PDSIZE\n 40\n2.0\n  9\n$PDMODE\n 70\n30\n  9\n$TEXTSIZE\n 40\n.02\n  9\n$TEXTSTYLE\n  7\nSTANDARD\n  0\nENDSEC\n  0\nSECTION\n2\nENTITIES"
+        footer = "\n0\nENDSEC\n0\nEOF"
+        # setting up entity base format
+        base_format = "\n0\nPOINT\n8\n{layer_1}\n10\n{est}\n20\n{nord}\n0\nTEXT\n8\n{layer_2}\n10\n{est}\n20\n{nord}\n40\n{altezza}\n1\n{name}"
+
+        with open(outfile) as out_file:
+            # read .out file
+            out_reader = csv.reader(out_file, delimiter=',')
+            # jump first 4 lines
+            for i in range(4):
+                next(out_reader)
+
+            # formatted string will stored here and then written to file.
+            out_array = []
+
+            for row in out_reader:
+                entity = base_format.format(layer_1=layer_1, layer_2=layer_2,
+                                            est=geoutils.convert_to_point(row[1]),
+                                            nord=geoutils.convert_to_point(row[3]),
+                                            altezza=height, name=row[0])
+                out_array.append(entity)
+
+        with open(output_file, 'w+') as f:
+            f.write(header)
+            for ent in out_array:
+                f.write(ent)
+            f.write(footer)
+
+
+class TranslateLmk(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        self.delta_x = QLineEdit(self)
+        delta_x_lbl = QLabel(self)
+        delta_x_lbl.setText("delta X:")
+        self.delta_y = QLineEdit(self)
+        delta_y_lbl = QLabel(self)
+        delta_y_lbl.setText("delta Y:")
+
+        self.btn_input_1.setToolTip(
+            '<i>Select input <b>.lmk</b> file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select translated <b>.lmk</b> output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(delta_x_lbl, 3, 1)
+        self.grid.addWidget(delta_y_lbl, 4, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.delta_x, 3, 2)
+        self.grid.addWidget(self.delta_y, 4, 2)
+        self.grid.addWidget(self.btn_run, 5, 2)
+
+        self.setWindowTitle("script#5: Translate lmk")
+        self.show()
+
+    def on_run(self):
+        input_lmk = self.input_file_1.text()
+        output_file = self.output_file.text()
+
+        if not input_lmk:
+            self.error_dialog.showMessage('Please select an input file.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        header, rows_data = geoutils.lmk2csv(open(input_lmk))
+
+        delta_x = self.delta_x.text()
+        delta_y = self.delta_y.text()
+
+        trans_rows = geoutils.trans_coordinates(delta_x, delta_y, rows_data)
+
+        with open(output_file, 'w+') as file:
+            file.write('\n'.join(header))
+            file.write('\n')
+            for row in trans_rows:
+                file.write(row[0])
+                file.write(str(row[1]).rjust(10))
+                file.write(str(row[2]).rjust(10))
+                file.write(str(row[3]).rjust(5))
+                file.write(str(row[4]).rjust(8))
+                file.write(str(row[5]).rjust(9))
+                file.write(str(row[6]).rjust(7))
+                file.write(str(row[7]).rjust(7))
+                file.write(str(row[8]).rjust(7))
+                file.write('\n')
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     # geo_main = GeoUtilsMainWindow()
-    script_1 = MatchDistanceWindow()
+    # script_1 = MatchDistance()
+    # script_2 = XMLFiller()
+    # script_3 = SwapCoordinates()
+    # script_4 = OutToDxf()
+    script_5 = TranslateLmk()
     sys.exit(app.exec_())
