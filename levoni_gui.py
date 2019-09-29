@@ -7,17 +7,16 @@ from PyQt5.QtWidgets import (
     QWidget,
     QPushButton,
     QDesktopWidget,
-    QMainWindow,
     QLineEdit,
     QGridLayout,
     QFileDialog,
     QErrorMessage,
     QLabel)
-from PyQt5.QtCore import QDir
+from PyQt5 import QtCore
 from itertools import combinations
 
 
-class GeoUtilsMainWindow(QMainWindow):
+class GeoUtilsMainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -25,54 +24,42 @@ class GeoUtilsMainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        # button for script 1: match distance
+        self.grid = QGridLayout()
+        self.setLayout(self.grid)
+
         btn_1 = QPushButton('#1: Match distance', self)
         btn_1.setToolTip(
             '<i>Return a list of same-distance points couples from a file\
              of 2D points.<i>'
         )
-        btn_1.resize(btn_1.sizeHint())
-        btn_1.move(20, 20)
-
-        # button for script 2: xml filler
         btn_2 = QPushButton('#2: XML filler', self)
         btn_2.setToolTip(
-            '<i>Update an xml file with the points given as input.<i>'
+            '<i>Update an <b>xml</b> file with the points given as input.<i>'
         )
-        btn_2.resize(btn_2.sizeHint())
-        btn_2.move(20, 80)
-
-        # button for script 3: swap coordinates
         btn_3 = QPushButton('#3: Swap coordinates', self)
         btn_3.setToolTip(
-            '<i>Replace x, y coordinates of lmk input file with new ones read\
+            '<i>Replace x, y coordinates of <b>lmk</b> input file with new ones read\
              in csv input file. Return a lmk updated file as outputfile.<i>'
         )
-        btn_3.resize(btn_3.sizeHint())
-        btn_3.move(20, 140)
-
-        # button for script 4: out to dxf
         btn_4 = QPushButton('#4: Out to dxf', self)
         btn_4.setToolTip(
             '<i>Create a <b>.DXF</b> file from a <b>.OUT</b> one<i>'
         )
-        btn_4.resize(btn_4.sizeHint())
-        btn_4.move(220, 20)
-
-        # button for script 5: translate lmk
         btn_5 = QPushButton('#5: Translate lmk', self)
         btn_5.setToolTip(
             '<i>Translate by given deltas the 2D coordinates in the <b>lmk</b> file.<i>'
         )
-        btn_5.resize(btn_5.sizeHint())
-        btn_5.move(220, 80)
-
         # quit button
         qbtn = QPushButton('Quit', self)
         qbtn.setStyleSheet("background-color: #d00303; color: #fff")
         qbtn.clicked.connect(QApplication.instance().quit)
-        qbtn.resize(qbtn.sizeHint())
-        qbtn.move(20, 200)
+
+        self.grid.addWidget(btn_1, 1, 1)
+        self.grid.addWidget(btn_2, 1, 2)
+        self.grid.addWidget(btn_3, 2, 1)
+        self.grid.addWidget(btn_4, 2, 2)
+        self.grid.addWidget(btn_5, 3, 1)
+        self.grid.addWidget(qbtn, 4, 1)
 
         # windows size and positioning
         self.resize(400, 300)
@@ -138,18 +125,18 @@ class BaseIOWindow(QWidget):
         self.move(qr.topLeft())
 
     def select_input_file_1(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.txt")
         # filename, _ = QFileDialog.getOpenFileName(self, "Open file", '/home')
         if filename != "":
             self.input_file_1.setText(filename)
 
     def select_input_file_2(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.txt")
         if filename != "":
             self.input_file_2.setText(filename)
 
     def select_output_file(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Select Files", QDir.currentPath(), "*.html")
+        filename, _ = QFileDialog.getSaveFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.html")
         if filename != "":
             self.output_file.setText(filename)
 
@@ -162,6 +149,7 @@ class MatchDistance(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
+        self.setWindowTitle('Match distance')
 
         self.btn_input_1.setToolTip(
             '<i>Select 2D coordinates file.<i>'
@@ -215,6 +203,8 @@ class XMLFiller(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        self.setWindowTitle('XML Filler')
+
         self.btn_input_1.setToolTip(
             '<i>Select XML file.<i>'
         )
@@ -265,6 +255,8 @@ class SwapCoordinates(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
+
+        self.setWindowTitle('Swap Coordinates')
 
         self.btn_input_1.setToolTip(
             '<i>Select lmk file.<i>'
@@ -326,6 +318,8 @@ class OutToDxf(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
+
+        self.setWindowTitle('Out To Dxf')
 
         self.btn_input_1.setToolTip(
             '<i>Select input <b>.out</b> file.<i>'
@@ -395,6 +389,8 @@ class TranslateLmk(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        self.setWindowTitle('Translate LMK')
+
         self.delta_x = QLineEdit(self)
         delta_x_lbl = QLabel(self)
         delta_x_lbl.setText("delta X:")
@@ -461,10 +457,10 @@ class TranslateLmk(BaseIOWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    # geo_main = GeoUtilsMainWindow()
+    geo_main = GeoUtilsMainWindow()
     # script_1 = MatchDistance()
     # script_2 = XMLFiller()
     # script_3 = SwapCoordinates()
     # script_4 = OutToDxf()
-    script_5 = TranslateLmk()
+    # script_5 = TranslateLmk()
     sys.exit(app.exec_())
