@@ -12,7 +12,8 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QErrorMessage,
     QLabel)
-from PyQt5 import QtCore
+from PyQt5.QtCore import QDir, pyqtSlot
+from PyQt5.QtGui import QIcon
 from itertools import combinations
 
 
@@ -61,6 +62,12 @@ class GeoUtilsMainWindow(QWidget):
         self.grid.addWidget(btn_5, 3, 1)
         self.grid.addWidget(qbtn, 4, 1)
 
+        btn_1.clicked.connect(self.btn1_onclick)
+        btn_2.clicked.connect(self.btn2_onclick)
+        btn_3.clicked.connect(self.btn3_onclick)
+        btn_4.clicked.connect(self.btn4_onclick)
+        btn_5.clicked.connect(self.btn5_onclick)
+
         # windows size and positioning
         self.resize(400, 300)
         self.center()
@@ -75,6 +82,36 @@ class GeoUtilsMainWindow(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    @pyqtSlot()
+    def btn1_onclick(self):
+        self.current_win = MatchDistance()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn2_onclick(self):
+        self.current_win = XMLFiller()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn3_onclick(self):
+        self.current_win = SwapCoordinates()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn4_onclick(self):
+        self.current_win = OutToDxf()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn5_onclick(self):
+        self.current_win = TranslateLmk()
+        self.current_win.show()
+        self.close()
+
 
 class BaseIOWindow(QWidget):
 
@@ -84,8 +121,6 @@ class BaseIOWindow(QWidget):
 
     def initUI(self):
         ''' Basic setup for I/O windows. IMPORTANT: call show() method in subclass'''
-        # grid = QGridLayout()
-        # self.setLayout(grid)
         self.grid = QGridLayout()
         self.setLayout(self.grid)
 
@@ -98,21 +133,19 @@ class BaseIOWindow(QWidget):
         self.btn_input_1 = QPushButton("Select input file")
         self.btn_input_2 = QPushButton("Select input file")
         self.btn_output = QPushButton("Select output file")
+        self.btn_mainwindow = QPushButton("Home")
+        self.btn_mainwindow.setIcon(QIcon("home_icon.png"))
+        self.btn_mainwindow.setStyleSheet("background-color: #00abff")
         self.btn_run = QPushButton("Run")
-        self.btn_run.setStyleSheet("background-color: #01942e")
-
-        # grid.addWidget(self.input_file_1, 1, 1)
-        # grid.addWidget(self.output_file, 2, 1)
-        # grid.addWidget(self.btn_input, 1, 2)
-        # grid.addWidget(self.btn_output, 2, 2)
-        # self.grid.addWidget(self.btn_run, 3, 2)
+        self.btn_run.setIcon(QIcon("play_icon.png"))
+        self.btn_run.setStyleSheet("background-color: #01942e; color: #fff")
 
         self.btn_input_1.clicked.connect(self.select_input_file_1)
         self.btn_input_2.clicked.connect(self.select_input_file_2)
         self.btn_output.clicked.connect(self.select_output_file)
         self.btn_run.clicked.connect(self.on_run)
+        self.btn_mainwindow.clicked.connect(self.switch_to_mainwindow)
 
-        # windows size and positioning
         self.resize(400, 300)
         self.center()
         # self.show()
@@ -125,24 +158,29 @@ class BaseIOWindow(QWidget):
         self.move(qr.topLeft())
 
     def select_input_file_1(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
         # filename, _ = QFileDialog.getOpenFileName(self, "Open file", '/home')
         if filename != "":
             self.input_file_1.setText(filename)
 
     def select_input_file_2(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Select Files", QDir.currentPath(), "*.txt")
         if filename != "":
             self.input_file_2.setText(filename)
 
     def select_output_file(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Select Files", QtCore.QDir.currentPath(), "*.html")
+        filename, _ = QFileDialog.getSaveFileName(self, "Select Files", QDir.currentPath(), "*.html")
         if filename != "":
             self.output_file.setText(filename)
 
     def on_run(self):
         ''' Define method in subclass'''
         return
+
+    def switch_to_mainwindow(self):
+        self.current_win = GeoUtilsMainWindow()
+        self.current_win.show()
+        self.close()
 
 
 class MatchDistance(BaseIOWindow):
@@ -165,6 +203,7 @@ class MatchDistance(BaseIOWindow):
         self.grid.addWidget(self.btn_input_1, 1, 2)
         self.grid.addWidget(self.btn_output, 2, 2)
         self.grid.addWidget(self.btn_run, 3, 2)
+        self.grid.addWidget(self.btn_mainwindow, 4, 2)
 
         self.setWindowTitle("script#1: Match distance")
         self.show()
@@ -225,6 +264,7 @@ class XMLFiller(BaseIOWindow):
         self.grid.addWidget(self.btn_input_2, 2, 2)
         self.grid.addWidget(self.btn_output, 3, 2)
         self.grid.addWidget(self.btn_run, 4, 2)
+        self.grid.addWidget(self.btn_mainwindow, 5, 2)
 
         self.setWindowTitle("script#2: XML filler")
         self.show()
@@ -278,6 +318,7 @@ class SwapCoordinates(BaseIOWindow):
         self.grid.addWidget(self.btn_input_2, 2, 2)
         self.grid.addWidget(self.btn_output, 3, 2)
         self.grid.addWidget(self.btn_run, 4, 2)
+        self.grid.addWidget(self.btn_mainwindow, 5, 2)
 
         self.setWindowTitle("script#3: Swap coordinates")
         self.show()
@@ -335,6 +376,7 @@ class OutToDxf(BaseIOWindow):
         self.grid.addWidget(self.btn_input_1, 1, 2)
         self.grid.addWidget(self.btn_output, 2, 2)
         self.grid.addWidget(self.btn_run, 3, 2)
+        self.grid.addWidget(self.btn_mainwindow, 4, 2)
 
         self.setWindowTitle("script#4: Out To Dxf")
         self.show()
@@ -416,6 +458,7 @@ class TranslateLmk(BaseIOWindow):
         self.grid.addWidget(self.delta_x, 3, 2)
         self.grid.addWidget(self.delta_y, 4, 2)
         self.grid.addWidget(self.btn_run, 5, 2)
+        self.grid.addWidget(self.btn_mainwindow, 6, 2)
 
         self.setWindowTitle("script#5: Translate lmk")
         self.show()
