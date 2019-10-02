@@ -52,7 +52,7 @@ class GeoUtilsMainWindow(QWidget):
         )
         # quit button
         qbtn = QPushButton('Quit', self)
-        qbtn.setIcon(QIcon("quit_icon.png"))
+        qbtn.setIcon(QIcon("images/quit_icon.png"))
         qbtn.setStyleSheet("background-color: #d00303; color: #fff")
         qbtn.clicked.connect(QApplication.instance().quit)
 
@@ -135,10 +135,10 @@ class BaseIOWindow(QWidget):
         self.btn_input_2 = QPushButton("Select input file")
         self.btn_output = QPushButton("Select output file")
         self.btn_mainwindow = QPushButton("Home")
-        self.btn_mainwindow.setIcon(QIcon("home_icon.png"))
+        self.btn_mainwindow.setIcon(QIcon("images/home_icon.png"))
         self.btn_mainwindow.setStyleSheet("background-color: #00abff")
         self.btn_run = QPushButton("Run")
-        self.btn_run.setIcon(QIcon("play_icon.png"))
+        self.btn_run.setIcon(QIcon("images/play_icon.png"))
         self.btn_run.setStyleSheet("background-color: #01942e; color: #fff")
 
         self.btn_input_1.clicked.connect(self.select_input_file_1)
