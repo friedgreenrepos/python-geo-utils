@@ -52,6 +52,7 @@ class GeoUtilsMainWindow(QWidget):
         )
         # quit button
         qbtn = QPushButton('Quit', self)
+        qbtn.setIcon(QIcon("quit_icon.png"))
         qbtn.setStyleSheet("background-color: #d00303; color: #fff")
         qbtn.clicked.connect(QApplication.instance().quit)
 
