@@ -1,5 +1,6 @@
 # Geo utils
 A collection of python command-line scripts for operations on 2D coordinates, specifically using CAD-related files.
+Alternatively you can decide to use the GUI, which offers the same funcionality of the scripts.
 
 ## Getting Started
 Simply clone this repo in your system, then create and activate a python virtual environment for it.
@@ -7,8 +8,6 @@ Simply clone this repo in your system, then create and activate a python virtual
 ### Prerequisites
 - python 3
 - everything specified in `requirements.txt`.
-
-(if you have problems installing package wxPython see [here](https://wiki.wxpython.org/How%20to%20install%20wxPython))
 
 ## Down To Business
 Each script has a very specific funcionality and also a strict I/O file handling.
