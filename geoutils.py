@@ -168,47 +168,39 @@ def match_el_array(el, rows, index=0):
 
 def swap_csv_coordinates(swapfile, rows):
     """
-    Read coordinates in 'swap_csv' and replace them in 'main_csv'.
-    For row in 'swap_csv':
-    - pad first element with zeroes (6 digits are needed)
-    - look for matches of such element in main_csv
-    - if occurrence is found replace main_csv x[mm] and y[mm] column values
-      with 2nd and 3rd elements of swap_csv.
-    - if not, create a default row filled with swap_csv values and defaults.
+    Replace coordinates in rows with ones read from swapfile.
+    - copy swapfile into array of array
+    - check if original row has to be replaced
+      (pad swapfile 0-th element with zeroes to compare correctly)
+    - if so write a new row with swapfile values otherwise write original row
     Return array of final swapped rows as arrays.
     """
+    swap_rows = []
     with open(swapfile) as swap_csv:
         swap_reader = csv.reader(swap_csv, delimiter=',')
-        swapped_rows = []
         for swap_row in swap_reader:
+            swap_new = list(swap_row)
             r_0 = str(swap_row[0]).zfill(6)
-            tmp_row = match_el_array(r_0, rows)
-            if tmp_row:
-                swapped_row = [
-                    tmp_row[0],
-                    swap_row[1],
-                    swap_row[2],
-                    tmp_row[3],
-                    tmp_row[4],
-                    tmp_row[5],
-                    tmp_row[6],
-                    tmp_row[7],
-                    tmp_row[8],
-                ]
-                swapped_rows.append(swapped_row)
-            else:
-                default_row = [
-                    r_0,
-                    swap_row[1],
-                    swap_row[2],
-                    '0',
-                    '0',
-                    '0',
-                    '0',
-                    '0',
-                    '0',
-                ]
-                swapped_rows.append(default_row)
+            swap_new[0] = r_0
+            swap_rows.append(swap_new)
+    swapped_rows = []
+    for row in rows:
+        tmp_row = match_el_array(row[0], swap_rows)
+        if tmp_row:
+            swapped_row = [
+                row[0],
+                tmp_row[1],
+                tmp_row[2],
+                row[3],
+                row[4],
+                row[5],
+                row[6],
+                row[7],
+                row[8],
+            ]
+            swapped_rows.append(swapped_row)
+        else:
+            swapped_rows.append(row)
     return swapped_rows
 
 
