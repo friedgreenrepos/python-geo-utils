@@ -48,7 +48,11 @@ class GeoUtilsMainWindow(QWidget):
         )
         btn_5 = QPushButton('#5: Translate lmk', self)
         btn_5.setToolTip(
-            '<i>Translate by given deltas the 2D coordinates in the <b>lmk</b> file.<i>'
+            '<i>Traslate by given deltas the 2D coordinates in the <b>lmk</b> file.<i>'
+        )
+        btn_6 = QPushButton('#6: Strip lmk', self)
+        btn_6.setToolTip(
+            '<i>Strip <b>lmk</b> input file to create a txt output file formatted like so: number, coord N, coord E.<i>'
         )
         # quit button
         qbtn = QPushButton('Quit', self)
@@ -61,6 +65,7 @@ class GeoUtilsMainWindow(QWidget):
         self.grid.addWidget(btn_3, 2, 1)
         self.grid.addWidget(btn_4, 2, 2)
         self.grid.addWidget(btn_5, 3, 1)
+        self.grid.addWidget(btn_6, 3, 2)
         self.grid.addWidget(qbtn, 4, 1)
 
         btn_1.clicked.connect(self.btn1_onclick)
@@ -68,6 +73,7 @@ class GeoUtilsMainWindow(QWidget):
         btn_3.clicked.connect(self.btn3_onclick)
         btn_4.clicked.connect(self.btn4_onclick)
         btn_5.clicked.connect(self.btn5_onclick)
+        btn_6.clicked.connect(self.btn6_onclick)
 
         # windows size and positioning
         self.resize(400, 300)
@@ -110,6 +116,12 @@ class GeoUtilsMainWindow(QWidget):
     @pyqtSlot()
     def btn5_onclick(self):
         self.current_win = TranslateLmk()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn6_onclick(self):
+        self.current_win = StripLmk()
         self.current_win.show()
         self.close()
 
@@ -496,6 +508,53 @@ class TranslateLmk(BaseIOWindow):
                 file.write(str(row[7]).rjust(7))
                 file.write(str(row[8]).rjust(7))
                 file.write('\n')
+
+
+class StripLmk(BaseIOWindow):
+    def initUI(self):
+        super().initUI()
+
+        self.setWindowTitle('script#6: Strip LMK')
+        self.btn_input_1.setToolTip(
+            '<i>Select lmk file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select name of txt output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.btn_run, 3, 2)
+        self.grid.addWidget(self.btn_mainwindow, 4, 2)
+
+        self.show()
+
+    def on_run(self):
+        input_file = self.input_file_1.text()
+        output_file = self.output_file.text()
+
+        if not input_file:
+            self.error_dialog.showMessage('Please select an input file.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Please select an output file.')
+            return
+
+        header, rows_data = geoutils.lmk2csv(open(input_file))
+
+        with open(output_file, 'w+') as f:
+            for row in rows_data:
+                f.write(row[0].lstrip("0"))
+                f.write(",")
+                f.write(row[1])
+                f.write(",")
+                f.write(row[2])
+                f.write(",")
+                f.write('\n')
 
 
 if __name__ == '__main__':
