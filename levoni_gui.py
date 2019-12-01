@@ -200,7 +200,6 @@ class MatchDistance(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
-        self.setWindowTitle('Match distance')
 
         self.btn_input_1.setToolTip(
             '<i>Select 2D coordinates file.<i>'
@@ -255,8 +254,6 @@ class XMLFiller(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
-        self.setWindowTitle('XML Filler')
-
         self.btn_input_1.setToolTip(
             '<i>Select XML file.<i>'
         )
@@ -308,8 +305,6 @@ class SwapCoordinates(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
-
-        self.setWindowTitle('Swap Coordinates')
 
         self.btn_input_1.setToolTip(
             '<i>Select lmk file.<i>'
@@ -372,8 +367,6 @@ class OutToDxf(BaseIOWindow):
 
     def initUI(self):
         super().initUI()
-
-        self.setWindowTitle('Out To Dxf')
 
         self.btn_input_1.setToolTip(
             '<i>Select input <b>.out</b> file.<i>'
@@ -444,8 +437,6 @@ class TranslateLmk(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
-        self.setWindowTitle('Translate LMK')
-
         self.delta_x = QLineEdit(self)
         delta_x_lbl = QLabel(self)
         delta_x_lbl.setText("delta X:")
@@ -514,7 +505,6 @@ class StripLmk(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
-        self.setWindowTitle('script#6: Strip LMK')
         self.btn_input_1.setToolTip(
             '<i>Select lmk file.<i>'
         )
@@ -531,6 +521,7 @@ class StripLmk(BaseIOWindow):
         self.grid.addWidget(self.btn_run, 3, 2)
         self.grid.addWidget(self.btn_mainwindow, 4, 2)
 
+        self.setWindowTitle('script#6: Strip LMK')
         self.show()
 
     def on_run(self):
