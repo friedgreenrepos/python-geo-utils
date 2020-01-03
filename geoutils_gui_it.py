@@ -171,18 +171,18 @@ class BaseIOWindow(QWidget):
         self.move(qr.topLeft())
 
     def select_input_file_1(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Seleziona file", QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Seleziona file", QDir.currentPath(), "")
         # filename, _ = QFileDialog.getOpenFileName(self, "Open file", '/home')
         if filename != "":
             self.input_file_1.setText(filename)
 
     def select_input_file_2(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Seleziona file", QDir.currentPath(), "*.txt")
+        filename, _ = QFileDialog.getOpenFileName(self, "Seleziona file", QDir.currentPath(), "")
         if filename != "":
             self.input_file_2.setText(filename)
 
     def select_output_file(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Seleziona file", QDir.currentPath(), "*.html")
+        filename, _ = QFileDialog.getSaveFileName(self, "Seleziona file", QDir.currentPath(), "")
         if filename != "":
             self.output_file.setText(filename)
 
