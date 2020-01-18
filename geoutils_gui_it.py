@@ -293,7 +293,7 @@ class XMLFiller(BaseIOWindow):
 
         points = geoutils.rows2list(open(input_points))
 
-        fill_xml_dict = geoutils.fill_xml_points(points=points, open_xml=open(input_xml))
+        fill_xml_dict = geoutils.fill_xml_points(points=points, xml_path=input_xml)
 
         fill_xml_xml = xmltodict.unparse(fill_xml_dict, pretty=True)
 

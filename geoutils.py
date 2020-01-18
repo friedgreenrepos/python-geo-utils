@@ -88,7 +88,7 @@ def get_dup_list(dist_tuple_list):
     return dup_list
 
 
-def fill_xml_points(points, open_xml):
+def fill_xml_points(points, xml_path):
     """
     Update an xml file with points passed as argument.
 
@@ -96,7 +96,9 @@ def fill_xml_points(points, open_xml):
     of every 'Riflettore' are updated with the points' coordinates.
     """
     dict = {}
-    with open_xml as fd:
+    # That b in the mode specifier in the open() states that the file shall be treated as binary.
+    # So dict will remain a bytes. No decoding attempt will happen this way.
+    with open(xml_path, 'rb') as fd:
         dict = xmltodict.parse(fd.read())
         count = 0
         for rif in dict['Impianto']['Riflettori']['Riflettore']:
