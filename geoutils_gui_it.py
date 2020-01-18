@@ -164,7 +164,7 @@ class BaseIOWindow(QWidget):
         # self.show()
 
     def center(self):
-        '''Centers window according to screen dimensions'''
+        """Centers window according to screen dimensions"""
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
@@ -187,7 +187,7 @@ class BaseIOWindow(QWidget):
             self.output_file.setText(filename)
 
     def on_run(self):
-        ''' Define method in subclass'''
+        """ Define method in subclass"""
         return
 
     def switch_to_mainwindow(self):
