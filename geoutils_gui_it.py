@@ -201,6 +201,8 @@ class MatchDistance(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel("Return a list of same-distance points couples from a file of 2D points", self)
+
         self.btn_input_1.setToolTip(
             '<i>Select 2D coordinates file.<i>'
         )
@@ -210,12 +212,14 @@ class MatchDistance(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
-        self.grid.addWidget(self.input_file_1, 1, 1)
-        self.grid.addWidget(self.output_file, 2, 1)
-        self.grid.addWidget(self.btn_input_1, 1, 2)
-        self.grid.addWidget(self.btn_output, 2, 2)
-        self.grid.addWidget(self.btn_run, 3, 2)
-        self.grid.addWidget(self.btn_mainwindow, 4, 2)
+        self.grid.addWidget(info_label, 0, 0, 1, 2)
+        
+        # self.grid.addWidget(self.input_file_1, 1, 1)
+        # self.grid.addWidget(self.output_file, 2, 1)
+        # self.grid.addWidget(self.btn_input_1, 1, 2)
+        # self.grid.addWidget(self.btn_output, 2, 2)
+        # self.grid.addWidget(self.btn_run, 3, 2)
+        # self.grid.addWidget(self.btn_mainwindow, 4, 2)
 
         self.setWindowTitle("script#1: Similitudini")
         self.show()
