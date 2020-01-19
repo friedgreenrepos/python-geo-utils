@@ -16,6 +16,33 @@ from PyQt5.QtCore import QDir, pyqtSlot
 from PyQt5.QtGui import QIcon
 from itertools import combinations
 
+info_labels = {
+    'match_distance': {
+        'en': "Return a list of same-distance points couples from a file of 2D points",
+        'it': "Passare in input un file TXT/CSV con le coordinate dei punti.\nIn output si ottiene il file TXT con le coppie di punti che hanno la stessa distanza."
+    },
+    'xml_filler': {
+        'en': "Update an xml file with the points given as input",
+        'it': "Passare come primo input il file XML, poi il file TXT/CSV dei punti.\nIn output si ottiene file XML aggiornato."
+    },
+    'swap_coordinates': {
+        'en': "Replace x, y coordinates of lmk input file with new ones read in csv input file. Return a lmk updated file as outputfile.",
+        'it': "Passare come primo input il file LMK, poi il file TXT/CSV dei punti e delle loro coordinate.\nIn output si ottiene il file LMK aggiornato.",
+    },
+    'out_to_dxf': {
+        'en': "Create a DXF file from a OUT one.",
+        'it': "Passare in input un file OUT. In output si ottiene un file DXF creato a partire dalle coordinate del file DXF."
+    },
+    'translate_lmk': {
+        'en': "Translate by given deltas (input via command line) the 2D coordinates in the lmk file.",
+        'it': "Passare in input un file LMK da traslare e specificare delta x e delta y. In output si ottiene un file LMK traslato."
+    },
+    'strip_lmk': {
+        'en': 'Strip lmk and return only points and their coordinates.',
+        'it': 'Passare in input un file LMK. In output si ottiene un file TXT in formato CSV con solamente i punti e le loro coordinate.'
+    }
+}
+
 
 class GeoUtilsMainWindow(QWidget):
 
@@ -201,8 +228,7 @@ class MatchDistance(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
-        info_label = QLabel("Return a list of same-distance points couples from a file of 2D points", self)
-
+        info_label = QLabel(info_labels['match_distance']['it'], self)
         self.btn_input_1.setToolTip(
             '<i>Select 2D coordinates file.<i>'
         )
@@ -212,14 +238,13 @@ class MatchDistance(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
-        self.grid.addWidget(info_label, 0, 0, 1, 2)
-        
-        # self.grid.addWidget(self.input_file_1, 1, 1)
-        # self.grid.addWidget(self.output_file, 2, 1)
-        # self.grid.addWidget(self.btn_input_1, 1, 2)
-        # self.grid.addWidget(self.btn_output, 2, 2)
-        # self.grid.addWidget(self.btn_run, 3, 2)
-        # self.grid.addWidget(self.btn_mainwindow, 4, 2)
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.btn_run, 3, 2)
+        self.grid.addWidget(self.btn_mainwindow, 4, 2)
 
         self.setWindowTitle("script#1: Similitudini")
         self.show()
@@ -258,6 +283,7 @@ class XMLFiller(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel(info_labels['xml_filler']['it'], self)
         self.btn_input_1.setToolTip(
             '<i>Select XML file.<i>'
         )
@@ -271,11 +297,12 @@ class XMLFiller(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
         self.grid.addWidget(self.input_file_1, 1, 1)
-        self.grid.addWidget(self.input_file_2, 2, 1)
-        self.grid.addWidget(self.output_file, 3, 1)
         self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.input_file_2, 2, 1)
         self.grid.addWidget(self.btn_input_2, 2, 2)
+        self.grid.addWidget(self.output_file, 3, 1)
         self.grid.addWidget(self.btn_output, 3, 2)
         self.grid.addWidget(self.btn_run, 4, 2)
         self.grid.addWidget(self.btn_mainwindow, 5, 2)
@@ -310,6 +337,7 @@ class SwapCoordinates(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel(info_labels['swap_coordinates']['it'], self)
         self.btn_input_1.setToolTip(
             '<i>Select lmk file.<i>'
         )
@@ -323,11 +351,12 @@ class SwapCoordinates(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
         self.grid.addWidget(self.input_file_1, 1, 1)
-        self.grid.addWidget(self.input_file_2, 2, 1)
-        self.grid.addWidget(self.output_file, 3, 1)
         self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.input_file_2, 2, 1)
         self.grid.addWidget(self.btn_input_2, 2, 2)
+        self.grid.addWidget(self.output_file, 3, 1)
         self.grid.addWidget(self.btn_output, 3, 2)
         self.grid.addWidget(self.btn_run, 4, 2)
         self.grid.addWidget(self.btn_mainwindow, 5, 2)
@@ -372,6 +401,7 @@ class OutToDxf(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel(info_labels['out_to_dxf']['it'], self)
         self.btn_input_1.setToolTip(
             '<i>Select input <b>.out</b> file.<i>'
         )
@@ -381,6 +411,7 @@ class OutToDxf(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
         self.grid.addWidget(self.input_file_1, 1, 1)
         self.grid.addWidget(self.output_file, 2, 1)
         self.grid.addWidget(self.btn_input_1, 1, 2)
@@ -441,6 +472,7 @@ class TranslateLmk(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel(info_labels['translate_lmk']['it'], self)
         self.delta_x = QLineEdit(self)
         delta_x_lbl = QLabel(self)
         delta_x_lbl.setText("delta X:")
@@ -457,13 +489,14 @@ class TranslateLmk(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
         self.grid.addWidget(self.input_file_1, 1, 1)
-        self.grid.addWidget(self.output_file, 2, 1)
-        self.grid.addWidget(delta_x_lbl, 3, 1)
-        self.grid.addWidget(delta_y_lbl, 4, 1)
         self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.output_file, 2, 1)
         self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(delta_x_lbl, 3, 1)
         self.grid.addWidget(self.delta_x, 3, 2)
+        self.grid.addWidget(delta_y_lbl, 4, 1)
         self.grid.addWidget(self.delta_y, 4, 2)
         self.grid.addWidget(self.btn_run, 5, 2)
         self.grid.addWidget(self.btn_mainwindow, 6, 2)
@@ -509,6 +542,7 @@ class StripLmk(BaseIOWindow):
     def initUI(self):
         super().initUI()
 
+        info_label = QLabel(info_labels['strip_lmk']['it'], self)
         self.btn_input_1.setToolTip(
             '<i>Select lmk file.<i>'
         )
@@ -518,9 +552,10 @@ class StripLmk(BaseIOWindow):
         )
         self.btn_output.resize(self.btn_output.sizeHint())
 
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
         self.grid.addWidget(self.input_file_1, 1, 1)
-        self.grid.addWidget(self.output_file, 2, 1)
         self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.output_file, 2, 1)
         self.grid.addWidget(self.btn_output, 2, 2)
         self.grid.addWidget(self.btn_run, 3, 2)
         self.grid.addWidget(self.btn_mainwindow, 4, 2)
