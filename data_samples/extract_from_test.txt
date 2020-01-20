@@ -1,0 +1,16 @@
+
+
+
+
+  Nome Stazione:               100
+
+  Identificativo:
+
+
+  Temperatura:
+
+  Codice                Nome               Altezza  Distanza    Angolo    Angolo  Distanza   Quota  Co.Rel.  Co.Rel.
+
+  punto                 punto               Prisma     incl.     vert.    orizz.    orizz.    rel.     Nord      Est
+
+                        200                  0.000   17.1033  100.5297    0.0000   17.1027  0.8577   17.103    0.000
