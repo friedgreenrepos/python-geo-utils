@@ -2,6 +2,47 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  LIBRETTO DI CAMPAGNA
+
+
+
+
+
+  File:                        16.GPO
+
+  N.Lavoro:                    1
+
+
+  Nome Lavoro:                 16
+
+  Operatore:
+
+  Strumento:
+
+
+  Data:                        16/01/2020
+
+
+
+
+
   Nome Stazione:               100
 
   Identificativo:
@@ -9,8 +50,108 @@
 
   Temperatura:
 
+  Pressione:
+
+
+  Altezza strum:               1.000
+
+
+
   Codice                Nome               Altezza  Distanza    Angolo    Angolo  Distanza   Quota  Co.Rel.  Co.Rel.
 
   punto                 punto               Prisma     incl.     vert.    orizz.    orizz.    rel.     Nord      Est
 
                         200                  0.000   17.1033  100.5297    0.0000   17.1027  0.8577   17.103    0.000
+
+                        200                  0.000   17.1031  100.5297    0.0000   17.1025  0.8577   17.103    0.000
+
+                        200                  0.000   17.1037  100.5297    0.0000   17.1031  0.8577   17.103    0.000
+                        200                  0.000   17.1035  100.5297    0.0000   17.1029  0.8577   17.103    0.000
+
+                        201                  0.000   32.2844   98.3525    0.0001   32.2736  1.8354   32.274    0.000
+
+                        202                  0.000   33.6465   96.6190   32.3187   33.5991  2.7861   29.362   16.334
+                        203                  0.000    6.8670   86.6772  134.9896    6.7172  2.4266   -3.509    5.728
+
+                        204                  0.000    7.1880   86.6772  141.1179    7.0312  2.4933   -4.232    5.615
+
+                        205                  0.000   13.7174   86.6829  295.9827   13.4184  3.8486   -0.846  -13.392
+                        206                  0.000   13.5660   86.6825  299.1077   13.2703  3.8172   -0.186  -13.269
+
+                        207                  0.000   32.7598   96.6921  305.5234   32.7156  2.7014    2.835  -32.593
+
+
+  Pagina 1 di 13
+
+
+
+
+
+  Codice          Nome   Altezza  Distanza    Angolo    Angolo  Distanza   Quota  Co.Rel.  Co.Rel.
+
+  punto           punto   Prisma     incl.     vert.    orizz.    orizz.    rel.     Nord      Est
+
+
+                  222      0.000   20.9935   94.9849  394.6516   20.9284  2.6521   20.855   -1.756
+                  223      0.000   20.9880   94.9847  394.6004   20.9229  2.6517   20.848   -1.772
+
+                  224      0.000   20.9872   94.9846  394.5496   20.9221  2.6517   20.845   -1.789
+
+                  225      0.000   20.9883   94.9847  394.5165   20.9232  2.6518   20.846   -1.800
+                  226      0.000   20.9914   94.9847  394.4886   20.9263  2.6520   20.848   -1.809
+
+
+
+
+
+
+
+
+
+
+  Pagina 2 di 13
+
+
+
+
+
+
+  File:                   16.GPO
+
+  N.Lavoro:               1
+
+
+  Nome Lavoro:            16
+
+  Operatore:
+
+
+  Strumento:
+
+  Data:                   16/01/2020
+
+
+
+
+
+  Nome Stazione:          200
+
+
+  Identificativo:
+
+  Temperatura:
+
+
+  Pressione:
+
+  Altezza strum:          0.000
+
+
+
+  Codice           Nome               Altezza  Distanza    Angolo  Angolo  Distanza    Quota  Co.Rel.  Co.Rel.
+
+  punto            punto               Prisma     incl.     vert.  orizz.    orizz.     rel.     Nord      Est
+
+
+                   100                  0.000   17.1039  100.1477  0.0000   17.1039  -0.0397   17.104    0.000
+                   100                  0.000   17.1042  100.1462  0.0019   17.1042  -0.0393   17.104    0.001
