@@ -40,7 +40,11 @@ info_labels = {
     'strip_lmk': {
         'en': 'Strip lmk and return only points and their coordinates.',
         'it': 'Passare in input un file LMK. In output si ottiene un file TXT in formato CSV con solamente i punti e le loro coordinate.'
-    }
+    },
+    'extract_dat': {
+        'en': 'Extract point info and write to dat file',
+        'it': 'Passare in input il file TXT con i dati sulle stazioni e i punti. In output si ottiene un file in formato DAT con tali info'
+    },
 }
 
 
@@ -81,6 +85,10 @@ class GeoUtilsMainWindow(QWidget):
         btn_6.setToolTip(
             '<i>Strip <b>lmk</b> input file to create a txt output file formatted like so: number, coord N, coord E.<i>'
         )
+        btn_7 = QPushButton('#6: Stazioni -> DAT', self)
+        btn_7.setToolTip(
+            '<i>Extract info from <b>txt</b> input file to create a DAT output file.<i>'
+        )
         # quit button
         qbtn = QPushButton('Esci', self)
         qbtn.setIcon(QIcon("images/quit_icon.png"))
@@ -93,7 +101,8 @@ class GeoUtilsMainWindow(QWidget):
         self.grid.addWidget(btn_4, 2, 2)
         self.grid.addWidget(btn_5, 3, 1)
         self.grid.addWidget(btn_6, 3, 2)
-        self.grid.addWidget(qbtn, 4, 1)
+        self.grid.addWidget(btn_7, 4, 1)
+        self.grid.addWidget(qbtn, 5, 1)
 
         btn_1.clicked.connect(self.btn1_onclick)
         btn_2.clicked.connect(self.btn2_onclick)
@@ -101,6 +110,7 @@ class GeoUtilsMainWindow(QWidget):
         btn_4.clicked.connect(self.btn4_onclick)
         btn_5.clicked.connect(self.btn5_onclick)
         btn_6.clicked.connect(self.btn6_onclick)
+        btn_7.clicked.connect(self.btn7_onclick)
 
         # windows size and positioning
         self.resize(400, 300)
@@ -149,6 +159,12 @@ class GeoUtilsMainWindow(QWidget):
     @pyqtSlot()
     def btn6_onclick(self):
         self.current_win = StripLmk()
+        self.current_win.show()
+        self.close()
+
+    @pyqtSlot()
+    def btn7_onclick(self):
+        self.current_win = ExtractDat()
         self.current_win.show()
         self.close()
 
@@ -585,6 +601,79 @@ class StripLmk(BaseIOWindow):
                 f.write(row[2])
                 f.write(",")
                 f.write('\n')
+
+
+class ExtractDat(BaseIOWindow):
+
+    def initUI(self):
+        super().initUI()
+
+        info_label = QLabel(info_labels['extract_dat']['it'], self)
+        self.btn_input_1.setToolTip(
+            '<i>Select TXT file.<i>'
+        )
+        self.btn_input_1.resize(self.btn_input_1.sizeHint())
+        self.btn_output.setToolTip(
+            '<i>Select DAT output file.<i>'
+        )
+        self.btn_output.resize(self.btn_output.sizeHint())
+
+        self.grid.addWidget(info_label, 0, 0, 1, 3)
+        self.grid.addWidget(self.input_file_1, 1, 1)
+        self.grid.addWidget(self.btn_input_1, 1, 2)
+        self.grid.addWidget(self.output_file, 2, 1)
+        self.grid.addWidget(self.btn_output, 2, 2)
+        self.grid.addWidget(self.btn_run, 3, 2)
+        self.grid.addWidget(self.btn_mainwindow, 4, 2)
+
+        self.setWindowTitle("script#7: Stazioni -> DAT")
+        self.show()
+
+    def on_run(self):
+        input_file = self.input_file_1.text()
+        output_file = self.output_file.text()
+
+        if not input_file:
+            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            return
+        if not output_file:
+            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            return
+
+        with open(input_file, 'r') as stations_file:
+            extract_lst = []
+            for line in stations_file:
+                if not line.strip():
+                    continue
+                else:
+                    split_line = line.split()
+                    if (len(split_line) == 3
+                            and split_line[0] == "Nome"
+                            and split_line[1] == "Stazione:"):
+                        extract_lst.append("s")
+                        extract_lst.append(split_line[2])
+                    if len(split_line) >= 6 and geoutils.represents_int(split_line[0]):
+                        extract_lst.append("p")
+                        extract_lst.append(line.split()[0])
+                        extract_lst.append(line.split()[4])
+                        extract_lst.append(line.split()[5])
+
+        with open(output_file, 'w+') as dat_file:
+            for index, el in enumerate(extract_lst):
+                if el == "s":
+                    dat_file.write("1")
+                    dat_file.write("|")
+                    dat_file.write(extract_lst[index + 1])
+                    dat_file.write("|")
+                    dat_file.write("\n")
+                elif el == "p":
+                    dat_file.write("2")
+                    dat_file.write("|")
+                    for i in range(1, 4):
+                        dat_file.write(extract_lst[index + i])
+                        dat_file.write("|")
+                    dat_file.write("\n")
+        
 
 
 if __name__ == '__main__':

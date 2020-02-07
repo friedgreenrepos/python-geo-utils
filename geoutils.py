@@ -226,3 +226,11 @@ def trans_coordinates(delta_x, delta_y, rows_data):
         t_row[1] = int(t_row[1]) + int(delta_x)
         t_row[2] = int(t_row[2]) + int(delta_y)
     return trans_rows
+
+
+def represents_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False

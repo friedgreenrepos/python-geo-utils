@@ -1,14 +1,8 @@
-def represents_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
+from geoutils import represents_int
 
-
-with open('data_samples/extract_from_test.txt', 'r') as input_file:
+with open('data_samples/extract_from_test.txt', 'r') as stations_file:
     extract_lst = []
-    for line in input_file:
+    for line in stations_file:
         if not line.strip():
             continue
         else:
@@ -24,19 +18,19 @@ with open('data_samples/extract_from_test.txt', 'r') as input_file:
                 extract_lst.append(line.split()[4])
                 extract_lst.append(line.split()[5])
 
-with open('data_samples/extract_to_test.dat', 'w+') as output_file:
+with open('data_samples/extract_to_test.dat', 'w+') as dat_file:
     extract_len = len(extract_lst)
     for index, el in enumerate(extract_lst):
         if el == "s":
-            output_file.write("1")
-            output_file.write("|")
-            output_file.write(extract_lst[index + 1])
-            output_file.write("|")
-            output_file.write("\n")
+            dat_file.write("1")
+            dat_file.write("|")
+            dat_file.write(extract_lst[index + 1])
+            dat_file.write("|")
+            dat_file.write("\n")
         elif el == "p":
-            output_file.write("2")
-            output_file.write("|")
+            dat_file.write("2")
+            dat_file.write("|")
             for i in range(1, 4):
-                output_file.write(extract_lst[index + i])
-                output_file.write("|")
-            output_file.write("\n")
+                dat_file.write(extract_lst[index + i])
+                dat_file.write("|")
+            dat_file.write("\n")
