@@ -39,13 +39,17 @@ info_labels = {
     },
     'strip_lmk': {
         'en': 'Strip lmk and return only points and their coordinates.',
-        'it': 'Passare in input un file LMK. In output si ottiene un file TXT in formato CSV con solamente i punti e le loro coordinate.'
+        'it': 'Passare in input un file LMK. In output si ottiene un file TXT in formato CSV con i punti e le loro coordinate.'
     },
     'extract_dat': {
         'en': 'Extract point info and write to dat file',
         'it': 'Passare in input il file TXT con i dati sulle stazioni e i punti. In output si ottiene un file in formato DAT con tali info'
     },
 }
+
+error_input_msg = "Attenzione! Selezionare file di input."
+error_output_msg = "Attenzione! Selezionare file di output."
+success_msg = "Operazione completata con successo."
 
 
 class GeoUtilsMainWindow(QWidget):
@@ -181,6 +185,7 @@ class BaseIOWindow(QWidget):
         self.setLayout(self.grid)
 
         self.error_dialog = QErrorMessage()
+        self.success_dialog = QErrorMessage()
 
         self.input_file_1 = QLineEdit()
         self.input_file_2 = QLineEdit()
@@ -270,10 +275,10 @@ class MatchDistance(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         points = geoutils.rows2list(open(input_file))
@@ -292,7 +297,7 @@ class MatchDistance(BaseIOWindow):
                                 dup[1][0][1], dup[1][0][2], dup[1][1][0], dup[1][1][1],
                                 dup[1][1][2], dup[1][2],)
                         )
-
+        self.success_dialog.showMessage(success_msg)
 
 class XMLFiller(BaseIOWindow):
 
@@ -332,10 +337,10 @@ class XMLFiller(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_xml or not input_points:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         points = geoutils.rows2list(open(input_points))
@@ -346,6 +351,7 @@ class XMLFiller(BaseIOWindow):
 
         with open(output_file, "w+") as f:
             f.write(fill_xml_xml)
+        self.success_dialog.showMessage(success_msg)
 
 
 class SwapCoordinates(BaseIOWindow):
@@ -386,10 +392,10 @@ class SwapCoordinates(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_lmk or not input_points:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         header, rows_data = geoutils.lmk2csv(open(input_lmk))
@@ -410,7 +416,7 @@ class SwapCoordinates(BaseIOWindow):
                 f.write(str(fr[7]).rjust(7))
                 f.write(str(fr[8]).rjust(7))
                 f.write('\n')
-
+        self.success_dialog.showMessage(success_msg)
 
 class OutToDxf(BaseIOWindow):
 
@@ -443,10 +449,10 @@ class OutToDxf(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not outfile:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         height = 0.07
@@ -481,6 +487,7 @@ class OutToDxf(BaseIOWindow):
             for ent in out_array:
                 f.write(ent)
             f.write(footer)
+        self.success_dialog.showMessage(success_msg)
 
 
 class TranslateLmk(BaseIOWindow):
@@ -525,10 +532,10 @@ class TranslateLmk(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_lmk:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         header, rows_data = geoutils.lmk2csv(open(input_lmk))
@@ -552,7 +559,7 @@ class TranslateLmk(BaseIOWindow):
                 file.write(str(row[7]).rjust(7))
                 file.write(str(row[8]).rjust(7))
                 file.write('\n')
-
+        self.success_dialog.showMessage(success_msg)
 
 class StripLmk(BaseIOWindow):
     def initUI(self):
@@ -584,10 +591,10 @@ class StripLmk(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         header, rows_data = geoutils.lmk2csv(open(input_file))
@@ -601,6 +608,7 @@ class StripLmk(BaseIOWindow):
                 f.write(row[2])
                 f.write(",")
                 f.write('\n')
+        self.success_dialog.showMessage(success_msg)
 
 
 class ExtractDat(BaseIOWindow):
@@ -634,10 +642,10 @@ class ExtractDat(BaseIOWindow):
         output_file = self.output_file.text()
 
         if not input_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di input.')
+            self.error_dialog.showMessage(error_input_msg)
             return
         if not output_file:
-            self.error_dialog.showMessage('Attenzione! Selezionare file di output.')
+            self.error_dialog.showMessage(error_output_msg)
             return
 
         with open(input_file, 'r') as stations_file:
@@ -673,7 +681,7 @@ class ExtractDat(BaseIOWindow):
                         dat_file.write(extract_lst[index + i])
                         dat_file.write("|")
                     dat_file.write("\n")
-        
+        self.success_dialog.showMessage(success_msg)
 
 
 if __name__ == '__main__':
